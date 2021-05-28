@@ -1,0 +1,11 @@
+
+
+
+{
+ "resultCount":2,
+ "results": [
+{"wrapperType":"artist", "artistType":"Artist", "artistName":"ABBA", "artistLinkUrl":null, "artistId":372976, "amgArtistId":3492, "primaryGenreName":"Pop", "primaryGenreId":14},
+{"wrapperType":"artist", "artistType":"Artist", "artistName":"Abba Yahudah", "artistLinkUrl":null, "artistId":203091003, "amgArtistId":925175, "primaryGenreName":"Reggae", "primaryGenreId":24}]
+}
+
+

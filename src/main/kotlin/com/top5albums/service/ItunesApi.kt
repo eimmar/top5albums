@@ -1,7 +1,6 @@
 package com.top5albums.service
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
-import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.annotation.JsonSubTypes
 import com.fasterxml.jackson.annotation.JsonSubTypes.Type
 import com.fasterxml.jackson.annotation.JsonTypeInfo
@@ -15,8 +14,8 @@ import org.springframework.web.reactive.function.client.bodyToMono
 import reactor.core.publisher.Mono
 
 @Component
-class ItunesApi {
-    private val iTunesClient = WebClient.create("https://itunes.apple.com")
+class ItunesApi(apiUrl: String = "https://itunes.apple.com") {
+    private val iTunesClient = WebClient.create(apiUrl)
 
     private val objectMapper = ObjectMapper().registerKotlinModule()
 
@@ -72,7 +71,6 @@ data class ITunesResponse<T>(
 interface ITunesEntity
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-@JsonInclude(JsonInclude.Include.NON_NULL)
 data class Artist(
     val artistName: String,
     val artistId: Int,
@@ -81,13 +79,12 @@ data class Artist(
 ): ITunesEntity
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-@JsonInclude(JsonInclude.Include.NON_NULL)
 data class Album(
     val artistName: String,
     val collectionName: String,
     val collectionViewUrl: String,
-    val artworkUrl60: String,
-    val artworkUrl100: String,
-    val collectionPrice: Float,
-    val trackCount: Int,
+    val artworkUrl60: String?,
+    val artworkUrl100: String?,
+    val collectionPrice: Float?,
+    val trackCount: Int?,
 ): ITunesEntity

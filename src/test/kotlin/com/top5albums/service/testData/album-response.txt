@@ -1,0 +1,11 @@
+
+
+
+{
+ "resultCount":2,
+ "results": [
+{"wrapperType":"artist", "artistType":"Artist", "artistName":"ABBA", "artistLinkUrl":"https://music.apple.com/us/artist/abba/372976?uo=4", "artistId":372976, "amgArtistId":3492, "primaryGenreName":"Pop", "primaryGenreId":14}, 
+{"wrapperType":"collection", "collectionType":"Album", "artistId":376154, "collectionId":1440767912, "amgArtistId":51752, "artistName":"Benny Andersson, Björn Ulvaeus, Meryl Streep & Amanda Seyfried", "collectionName":"Mamma Mia! (The Movie Soundtrack feat. the Songs of ABBA) [Bonus Track Version]", "collectionCensoredName":"Mamma Mia! (The Movie Soundtrack feat. the Songs of ABBA) [Bonus Track Version]", "artistViewUrl":"https://music.apple.com/us/artist/benny-andersson/376154?uo=4", "collectionViewUrl":"https://music.apple.com/us/album/mamma-mia-movie-soundtrack-feat-songs-abba-bonus-track/1440767912?uo=4", "artworkUrl60":"https://is1-ssl.mzstatic.com/image/thumb/Music114/v4/c5/a0/61/c5a061a8-0df2-490d-e6f3-90658203ffdc/source/60x60bb.jpg", "artworkUrl100":"https://is1-ssl.mzstatic.com/image/thumb/Music114/v4/c5/a0/61/c5a061a8-0df2-490d-e6f3-90658203ffdc/source/100x100bb.jpg", "collectionPrice":5.99, "collectionExplicitness":"notExplicit", "trackCount":18, "copyright":"This Compilation ℗ 2008 Littlestar Services Limited, Under Exclusive License to Polydor Ltd.", "country":"USA", "currency":"USD", "releaseDate":"2008-01-01T08:00:00Z", "primaryGenreName":"Musicals"}]
+}
+
+
