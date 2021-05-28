@@ -8,6 +8,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
+import org.springframework.cache.annotation.Cacheable
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.bodyToMono
@@ -19,6 +20,7 @@ class ItunesApi {
 
     private val objectMapper = ObjectMapper().registerKotlinModule()
 
+    @Cacheable(CacheConfig.itunesArtistCache)
     fun searchArtists(term: String? = null): Mono<ITunesResponse<Artist>> {
         return iTunesClient.get()
             .uri {
@@ -32,6 +34,7 @@ class ItunesApi {
             .map { objectMapper.readValue(String(it).trim(), object : TypeReference<ITunesResponse<Artist>>() {}) }
     }
 
+    @Cacheable(CacheConfig.itunesAlbumCache)
     fun lookUpAlbums(artistId: String, limit: Int): Mono<ITunesResponse<Album>> {
         return iTunesClient.get()
             .uri {
