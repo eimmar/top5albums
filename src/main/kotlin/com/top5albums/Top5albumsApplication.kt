@@ -8,7 +8,7 @@ import com.top5albums.service.ItunesApi
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 import org.springframework.web.bind.annotation.*
-import reactor.core.publisher.Flux
+import reactor.core.publisher.Mono
 
 @SpringBootApplication
 class Top5albumsApplication
@@ -32,9 +32,12 @@ class FavoriteArtistController(
     }
 
     @PostMapping("/top-5-albums/{userId}")
-    fun top5FavoriteAlbums(@PathVariable userId: Int): Flux<ITunesResponse<Any>> {
-        val userFavoriteArtist = userFavoriteArtistRepository.findById(userId).get()
+    fun top5FavoriteAlbums(@PathVariable userId: Int): Mono<ITunesResponse<Album>> {
+        val userFavoriteArtist = userFavoriteArtistRepository.findById(userId)
 
-        return itunesApi.lookUpAlbums(userFavoriteArtist.artistId.toString(), 5)
+        if (userFavoriteArtist.isEmpty)
+            return Mono.just(ITunesResponse(resultCount = 0, results = emptyList()))
+
+        return itunesApi.lookUpAlbums(userFavoriteArtist.get().artistId.toString(), 5)
     }
 }

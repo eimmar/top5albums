@@ -1,14 +1,16 @@
 package com.top5albums.service
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
+import com.fasterxml.jackson.annotation.JsonSubTypes
+import com.fasterxml.jackson.annotation.JsonSubTypes.Type
+import com.fasterxml.jackson.annotation.JsonTypeInfo
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
-import org.springframework.http.MediaType
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.client.WebClient
-import org.springframework.web.reactive.function.client.bodyToFlux
-import reactor.core.publisher.Flux
+import org.springframework.web.reactive.function.client.bodyToMono
+import reactor.core.publisher.Mono
 
 @Component
 class ItunesApi {
@@ -16,9 +18,7 @@ class ItunesApi {
 
     private val objectMapper = ObjectMapper().registerKotlinModule()
 
-    fun searchArtists(term: String? = null): Flux<ITunesResponse<Artist>> {
-
-        //TODO: Fix truncated flux results
+    fun searchArtists(term: String? = null): Mono<ITunesResponse<Artist>> {
         return iTunesClient.get()
             .uri {
                 it.path("/search")
@@ -26,16 +26,12 @@ class ItunesApi {
                     .queryParam("term", term)
                     .build()
             }
-            .accept(MediaType.ALL)
             .retrieve()
-            .bodyToFlux<ByteArray>()
-            .map {
-                println(String(it).trim())
-                objectMapper.readValue(String(it).trim(), object : TypeReference<ITunesResponse<Artist>>() {})
-            }
+            .bodyToMono<ByteArray>()
+            .map { objectMapper.readValue(String(it).trim(), object : TypeReference<ITunesResponse<Artist>>() {}) }
     }
 
-    fun lookUpAlbums(artistId: String, limit: Int): Flux<ITunesResponse<Any>> {
+    fun lookUpAlbums(artistId: String, limit: Int): Mono<ITunesResponse<Album>> {
         return iTunesClient.get()
             .uri {
                 it.path("/lookup")
@@ -44,19 +40,32 @@ class ItunesApi {
                     .queryParam("limit", limit)
                     .build()
             }
-            .accept(MediaType.ALL)
             .retrieve()
-            .bodyToFlux<ByteArray>()
+            .bodyToMono<ByteArray>()
+            .map { objectMapper.readValue(String(it).trim(), object : TypeReference<ITunesResponse<ITunesEntity>>() {}) }
             .map {
-                objectMapper.readValue(String(it).trim(), object : TypeReference<ITunesResponse<Any>>() {})
+                val albums = it.results.filterIsInstance<Album>()
+
+                ITunesResponse(albums.size, albums)
             }
     }
 }
 
 data class ITunesResponse<T>(
-    val resultCount: String,
+    val resultCount: Int,
     val results: List<T>
 )
+
+@JsonTypeInfo(
+    use = JsonTypeInfo.Id.NAME,
+    include = JsonTypeInfo.As.PROPERTY,
+    property = "wrapperType"
+)
+@JsonSubTypes(
+    Type(value = Artist::class, name = "artist"),
+    Type(value = Album::class, name = "collection")
+)
+interface ITunesEntity
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 data class Artist(
@@ -64,9 +73,15 @@ data class Artist(
     val artistLinkUrl: String,
     val artistId: Int,
     val primaryGenreName: String?
-)
+): ITunesEntity
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 data class Album(
-    val albumName: String
-)
+    val artistName: String,
+    val collectionName: String,
+    val collectionViewUrl: String,
+    val artworkUrl60: String,
+    val artworkUrl100: String,
+    val collectionPrice: Float,
+    val trackCount: Int,
+): ITunesEntity
