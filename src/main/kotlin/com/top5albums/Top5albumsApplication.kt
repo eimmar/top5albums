@@ -23,12 +23,15 @@ class FavoriteArtistController(
     private val itunesApi: ItunesApi,
     private val userFavoriteArtistRepository: UserFavoriteArtistRepository
 ) {
+    data class SearchRequest(val term: String?)
+    data class SaveRequest(val artistId: Int, val userId: Int)
+
     @PostMapping("/search")
-    fun search(@RequestParam(required = false) term: String?) = itunesApi.searchArtists(term)
+    fun search(@RequestBody request: SearchRequest) = itunesApi.searchArtists(request.term)
 
     @PostMapping("/save")
-    fun save(@RequestParam artistId: Int, @RequestParam userId: Int) {
-        userFavoriteArtistRepository.save(UserFavoriteArtist(userId, artistId))
+    fun save(@RequestBody request: SaveRequest) {
+        userFavoriteArtistRepository.save(UserFavoriteArtist(request.userId, request.artistId))
     }
 
     @PostMapping("/top-5-albums/{userId}")

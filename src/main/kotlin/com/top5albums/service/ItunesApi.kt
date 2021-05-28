@@ -1,6 +1,7 @@
 package com.top5albums.service
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
+import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.annotation.JsonSubTypes
 import com.fasterxml.jackson.annotation.JsonSubTypes.Type
 import com.fasterxml.jackson.annotation.JsonTypeInfo
@@ -68,14 +69,16 @@ data class ITunesResponse<T>(
 interface ITunesEntity
 
 @JsonIgnoreProperties(ignoreUnknown = true)
+@JsonInclude(JsonInclude.Include.NON_NULL)
 data class Artist(
     val artistName: String,
-    val artistLinkUrl: String,
     val artistId: Int,
+    val artistLinkUrl: String?,
     val primaryGenreName: String?
 ): ITunesEntity
 
 @JsonIgnoreProperties(ignoreUnknown = true)
+@JsonInclude(JsonInclude.Include.NON_NULL)
 data class Album(
     val artistName: String,
     val collectionName: String,
