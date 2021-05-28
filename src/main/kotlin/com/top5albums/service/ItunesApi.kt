@@ -45,9 +45,9 @@ class ItunesApi(apiUrl: String = "https://itunes.apple.com") {
             }
             .retrieve()
             .bodyToMono<ByteArray>()
-            .map { objectMapper.readValue(String(it).trim(), object : TypeReference<ITunesResponse<ITunesEntity>>() {}) }
             .map {
-                val albums = it.results.filterIsInstance<Album>()
+                val serialized = objectMapper.readValue(String(it).trim(), object : TypeReference<ITunesResponse<ITunesEntity>>() {})
+                val albums = serialized.results.filterIsInstance<Album>()
 
                 ITunesResponse(albums.size, albums)
             }
