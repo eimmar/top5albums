@@ -21,6 +21,8 @@ class ItunesApiTest {
         fun tearDown() = mockServer.shutdown()
     }
 
+    private val itunesApi = ItunesApi("http://localhost:${mockServer.port}")
+
     private fun createMockFileResponse(testDataFileName: String): MockResponse {
         val fileBuffer = Buffer()
 
@@ -39,8 +41,6 @@ class ItunesApiTest {
 
     @Test
     fun `It must return only albums`() {
-        val itunesApi = ItunesApi("http://localhost:${mockServer.port}")
-
         // 1st line contains artist
         mockServer.enqueue(createMockFileResponse("album-response.txt"))
 
@@ -65,8 +65,6 @@ class ItunesApiTest {
 
     @Test
     fun `It must return artists`() {
-        val itunesApi = ItunesApi("http://localhost:${mockServer.port}")
-
         mockServer.enqueue(createMockFileResponse("artist-response.txt"))
 
         assertEquals(
